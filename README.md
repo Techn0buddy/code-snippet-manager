@@ -33,7 +33,8 @@ A lightweight Chrome Extension to **store, manage, and copy code snippets** dire
 
 ## 📌 Preview
 
-![screenshot](screenshot.png)
+![Snippet Manager Sceenshot](/screenshot.JPG)
+
 
 ---
 
