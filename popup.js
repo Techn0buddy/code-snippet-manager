@@ -18,6 +18,49 @@ document.addEventListener("DOMContentLoaded", () => {
         const div = document.createElement("div");
         div.className = "snippet";
 
+        // 🔧 Actions container
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        // 📋 Copy button
+        const copyBtn = document.createElement("button");
+        copyBtn.setAttribute("data-tooltip", "Copy");
+        copyBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 18H8V7h11v16z"/>
+          </svg>`;
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(s.code).then(() => {
+            copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path fill="#28a745" d="M20.285 6.709l-11.02 11.02-5.656-5.657 1.414-1.414 4.242 4.243L18.87 5.295z"/>
+            </svg>`;
+            setTimeout(() => {
+              copyBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 18H8V7h11v16z"/>
+                </svg>`;
+            }, 1500);
+          });
+        };
+
+        // 🗑️ Delete button
+        const deleteBtn = document.createElement("button");
+        deleteBtn.setAttribute("data-tooltip", "Delete");
+        deleteBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          </svg>`;
+        deleteBtn.onclick = () => {
+          snippets.splice(index, 1);
+          chrome.storage.local.set({ snippets }, () =>
+            renderSnippets(snippets, search.value.toLowerCase())
+          );
+        };
+
+        actions.appendChild(copyBtn);
+        actions.appendChild(deleteBtn);
+        div.appendChild(actions);
+
         const title = document.createElement("h3");
         title.textContent = s.title;
 
@@ -27,33 +70,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const pre = document.createElement("pre");
         pre.textContent = s.code;
+        pre.classList.add("collapsed");
 
-        const copyBtn = document.createElement("button");
-        copyBtn.textContent = "Copy";
-        copyBtn.onclick = () => {
-          navigator.clipboard.writeText(s.code).then(() => {
-            copyBtn.textContent = "Copied!";
-            setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
-          });
-        };
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.onclick = () => {
-          snippets.splice(index, 1);
-          chrome.storage.local.set({ snippets }, () =>
-            renderSnippets(snippets, search.value.toLowerCase())
-          );
+        const toggleBtn = document.createElement("button");
+        toggleBtn.textContent = "Show More";
+        toggleBtn.style.fontSize = "11px";
+        toggleBtn.style.marginTop = "4px";
+        toggleBtn.style.backgroundColor = "#007bff";
+        toggleBtn.onclick = () => {
+          const isCollapsed = pre.classList.toggle("collapsed");
+          toggleBtn.textContent = isCollapsed ? "Show More" : "Show Less";
         };
 
         div.appendChild(title);
         div.appendChild(meta);
         div.appendChild(pre);
-        div.appendChild(copyBtn);
-        div.appendChild(deleteBtn);
+        div.appendChild(toggleBtn);
         list.appendChild(div);
       });
   }
+  
+  
+  
 
   function loadSnippets() {
     chrome.storage.local.get(["snippets"], (res) => {
