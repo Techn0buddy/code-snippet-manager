@@ -7,10 +7,20 @@
 </head>
 
 <body>
-    <h1>Snippets</h1>
+    <h1>Code Snippet Manager</h1>
+
+    <input type="text" id="search" placeholder="Search snippets..." />
 
     <form id="snippetForm">
         <input type="text" id="title" placeholder="Snippet Title" required />
+        <select id="language">
+            <option value="Plain Text" selected>Plain Text</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="Python">Python</option>
+            <option value="HTML">HTML</option>
+            <option value="CSS">CSS</option>
+            <option value="C++">C++</option>
+        </select>
         <textarea id="code" placeholder="Your code here..." required></textarea>
         <button type="submit">Save</button>
     </form>
